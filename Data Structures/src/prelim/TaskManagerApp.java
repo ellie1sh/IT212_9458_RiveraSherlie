@@ -52,6 +52,10 @@ public class TaskManagerApp {
                         System.out.print("Enter status (Completed/Pending): ");
                         String status = scanner.nextLine();
                         Task task = new Task(name, assigned, submitted, status);
+                        if (taskList.search(task) != -1) {
+                            System.out.println("Duplicate not allowed: Task with same project name already exists.");
+                            break;
+                        }
                         taskList.insert(task);
                         System.out.println("Task added successfully!");
                     } catch (ListOverflowException e) {

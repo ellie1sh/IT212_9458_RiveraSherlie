@@ -51,6 +51,10 @@ public class PersonalPropertyApp {
                         System.out.print("Enter status: ");
                         String status = scanner.nextLine();
                         PersonalProperty property = new PersonalProperty(name, model, color, status);
+                        if (propertyList.search(property) != -1) {
+                            System.out.println("Duplicate not allowed: Property with same name and model already exists.");
+                            break;
+                        }
                         propertyList.insert(property);
                         System.out.println("Property added successfully!");
                     } catch (ListOverflowException e) {
