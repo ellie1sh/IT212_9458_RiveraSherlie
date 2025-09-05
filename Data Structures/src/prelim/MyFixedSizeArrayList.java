@@ -1,5 +1,14 @@
 package prelim;
 import java.util.NoSuchElementException;
+/**
+ * Student Registration System
+ * Application: Class Roster Manager – Maximum 5 students per section
+ *
+ * Notes:
+ * - This list intentionally keeps a fixed capacity of 5 items, mirroring a
+ *   small class section. Logic remains generic (E can be any type), but
+ *   printouts and comments use a student roster metaphor for clarity.
+ */
 public class MyFixedSizeArrayList<E> implements MyList<E> {
     private E[] array;
     private int size;
@@ -17,7 +26,7 @@ public class MyFixedSizeArrayList<E> implements MyList<E> {
     @Override
     public void insert(E data) throws ListOverflowException {
         if (size >= CAPACITY) {
-            throw new ListOverflowException("Array is full! Cannot add more elements.");
+            throw new ListOverflowException("Section is full (max 5). Cannot add more items.");
         }
         array[size] = data;
         size++;
@@ -54,9 +63,9 @@ public class MyFixedSizeArrayList<E> implements MyList<E> {
         }
         return -1;
     }
-    // Helper method to display all elements
+    // Helper method to display the current class roster (all elements)
     public void display() {
-        System.out.print("List contents: [");
+        System.out.print("Roster: [");
         for (int i = 0; i < size; i++) {
             System.out.print(array[i]);
             if (i < size - 1) System.out.print(", ");
