@@ -12,7 +12,6 @@ public class StudentGrade {
     private double finalGrade;
     private String letterGrade;     // "A", "B+", "C", etc.
     private String status;          // "PASSED", "FAILED", "INCOMPLETE"
-    private String dateRecorded;
 
     /**
      * Default constructor
@@ -25,7 +24,6 @@ public class StudentGrade {
         this.finalGrade = 0.0;
         this.letterGrade = "";
         this.status = "INCOMPLETE";
-        this.dateRecorded = "";
     }
 
     /**
@@ -33,7 +31,7 @@ public class StudentGrade {
      */
     public StudentGrade(String studentName, String subjectCode, String semester,
                         double midtermGrade, double finalGrade, String letterGrade,
-                        String status, String dateRecorded) {
+                        String status) {
         this.studentName = studentName;
         this.subjectCode = subjectCode;
         this.semester = semester;
@@ -41,7 +39,6 @@ public class StudentGrade {
         this.finalGrade = finalGrade;
         this.letterGrade = letterGrade;
         this.status = status;
-        this.dateRecorded = dateRecorded;
     }
 
     // Getters and Setters
@@ -66,8 +63,6 @@ public class StudentGrade {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
-    public String getDateRecorded() { return dateRecorded; }
-    public void setDateRecorded(String dateRecorded) { this.dateRecorded = dateRecorded; }
 
     /**
      * Calculate the average grade from midterm and final
@@ -101,8 +96,8 @@ public class StudentGrade {
     @Override
     public String toString() {
         return String.format("StudentGrade{name='%s', subject='%s', semester='%s', " +
-                "midterm=%.2f, final=%.2f, letter='%s', status='%s', date='%s'}",
+                "midterm=%.2f, final=%.2f, letter='%s', status='%s'}",
                 studentName, subjectCode, semester, midtermGrade, finalGrade, 
-                letterGrade, status, dateRecorded);
+                letterGrade, status);
     }
 }

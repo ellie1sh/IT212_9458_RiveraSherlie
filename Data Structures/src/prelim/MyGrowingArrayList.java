@@ -112,7 +112,7 @@ public class MyGrowingArrayList<E> implements MyList<E> {
         
         array = newArray;
         capacity = newCapacity;
-        System.out.println("📈 Academic records storage expanded! New capacity: " + capacity);
+        System.out.println("Academic records storage expanded! New capacity: " + capacity);
     }
     /**
      * Retrieves an element from the list that matches the given data.
