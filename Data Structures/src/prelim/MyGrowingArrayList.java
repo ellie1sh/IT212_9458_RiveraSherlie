@@ -1,5 +1,14 @@
 package prelim;
 import java.util.NoSuchElementException;
+/**
+ * Student Grade Tracker
+ * Application: Academic Records System – Grows as more grades are added
+ *
+ * Notes:
+ * - This list grows dynamically as items are inserted, similar to adding
+ *   grades across terms. Logic remains generic, but comments and messages use
+ *   the grading metaphor for readability.
+ */
 public class MyGrowingArrayList<E> implements MyList<E> {
     private E[] array;
     private int size;
@@ -17,7 +26,7 @@ public class MyGrowingArrayList<E> implements MyList<E> {
     @Override
     public void insert(E data) throws ListOverflowException {
         if (size >= capacity) {
-// Double the capacity
+// Double the capacity to accommodate more grade records
             grow();
         }
         array[size] = data;
@@ -27,13 +36,13 @@ public class MyGrowingArrayList<E> implements MyList<E> {
     private void grow() {
         int newCapacity = capacity * 2;
         E[] newArray = (E[]) new Object[newCapacity];
-// Copy old elements to new array
+// Copy existing grade entries to the larger transcript array
         for (int i = 0; i < size; i++) {
             newArray[i] = array[i];
         }
         array = newArray;
         capacity = newCapacity;
-        System.out.println("Array grown to capacity: " + capacity);
+        System.out.println("Capacity increased to: " + capacity);
     }
     @Override
 
@@ -69,7 +78,7 @@ public class MyGrowingArrayList<E> implements MyList<E> {
         return -1;
     }
     public void display() {
-        System.out.print("List contents: [");
+        System.out.print("Grades: [");
         for (int i = 0; i < size; i++) {
             System.out.print(array[i]);
             if (i < size - 1) System.out.print(", ");
