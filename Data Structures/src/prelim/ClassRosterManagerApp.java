@@ -8,7 +8,7 @@ package prelim;
 public class ClassRosterManagerApp {
     
     public static void main(String[] args) {
-        System.out.println("🎓 CLASS ROSTER MANAGER DEMO 🎓");
+        System.out.println("CLASS ROSTER MANAGER DEMO");
         System.out.println("Using MyFixedSizeArrayList (Fixed Size = 5)\n");
         
         // Create a fixed-size roster for a class section
@@ -29,7 +29,7 @@ public class ClassRosterManagerApp {
                                      "Computer Science", "Data Structures", "2nd Year", 3.4);
         
         try {
-            System.out.println("📝 ENROLLING STUDENTS:");
+            System.out.println("ENROLLING STUDENTS:");
             System.out.println("======================");
             
             // Add students to the roster
@@ -43,56 +43,56 @@ public class ClassRosterManagerApp {
             classRoster.display();
             
             // Try to add one more student (this should throw an exception)
-            System.out.println("🚨 ATTEMPTING TO EXCEED CAPACITY:");
+            System.out.println("ATTEMPTING TO EXCEED CAPACITY:");
             System.out.println("===================================");
             classRoster.insert(student6);
             
         } catch (ListOverflowException e) {
-            System.out.println("❌ " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             System.out.println("Cannot enroll more students - section is full!\n");
         }
         
         // Demonstrate search functionality
-        System.out.println("🔍 SEARCHING FOR STUDENTS:");
+        System.out.println("SEARCHING FOR STUDENTS:");
         System.out.println("===========================");
         try {
             Student foundStudent = classRoster.getElement(student2);
-            System.out.println("✅ Found: " + foundStudent.getStudentName());
+            System.out.println("Found: " + foundStudent.getStudentName());
             
             // Search by creating a student with same ID (equals method uses ID)
             Student searchStudent = new Student();
             searchStudent.setIdNumber("2021003");
             Student found = classRoster.getElement(searchStudent);
-            System.out.println("✅ Found by ID: " + found.getStudentName());
+            System.out.println("Found by ID: " + found.getStudentName());
             
         } catch (Exception e) {
-            System.out.println("❌ " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
         
         // Demonstrate deletion
-        System.out.println("\n🗑️  DROPPING A STUDENT:");
+        System.out.println("\nDROPPING A STUDENT:");
         System.out.println("========================");
         boolean deleted = classRoster.delete(student3);
         if (deleted) {
-            System.out.println("✅ Successfully dropped " + student3.getStudentName());
+            System.out.println("Successfully dropped " + student3.getStudentName());
         }
         
         classRoster.display();
         
         // Now we can add the waitlisted student
         try {
-            System.out.println("📋 ENROLLING FROM WAITLIST:");
+            System.out.println("ENROLLING FROM WAITLIST:");
             System.out.println("============================");
             student6.setStatus("ENROLLED");
             classRoster.insert(student6);
             classRoster.display();
             
         } catch (ListOverflowException e) {
-            System.out.println("❌ " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
         
         // Show final statistics
-        System.out.println("📊 FINAL ROSTER STATISTICS:");
+        System.out.println("FINAL ROSTER STATISTICS:");
         System.out.println("============================");
         System.out.println("Total enrolled: " + classRoster.getSize());
         System.out.println("Maximum capacity: " + classRoster.getCapacity());
@@ -100,10 +100,10 @@ public class ClassRosterManagerApp {
         System.out.println("Is full: " + classRoster.isFull());
         System.out.println("Is empty: " + classRoster.isEmpty());
         
-        System.out.println("\n🎯 CONCLUSION:");
+        System.out.println("\nCONCLUSION:");
         System.out.println("MyFixedSizeArrayList is perfect for scenarios with strict capacity limits!");
-        System.out.println("✓ Prevents overcrowding in class sections");
-        System.out.println("✓ Memory efficient with fixed allocation");
-        System.out.println("✓ Fast operations for small, controlled datasets");
+        System.out.println("- Prevents overcrowding in class sections");
+        System.out.println("- Memory efficient with fixed allocation");
+        System.out.println("- Fast operations for small, controlled datasets");
     }
 }
