@@ -1,11 +1,13 @@
 package prelim;
 
 import java.util.Scanner;
+import java.util.InputMismatchException;
 
 /**
  * Class Roster Manager Application
  * Demonstrates MyFixedSizeArrayList with Student objects
  * Perfect for limited capacity scenarios - Maximum 5 students per section
+ * Now with comprehensive input validation
  */
 public class ClassRosterManagerApp {
     
@@ -17,46 +19,147 @@ public class ClassRosterManagerApp {
         // Create a fixed-size roster for a class section
         MyFixedSizeArrayList<Student> classRoster = new MyFixedSizeArrayList<>();
         
-        // Ask user whether to use sample data or input their own
-        System.out.print("Do you want to (1) Use sample data or (2) Input your own data? Enter 1 or 2: ");
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        // Ask user whether to use sample data or input their own with validation
+        int choice = 0;
+        while (choice != 1 && choice != 2) {
+            System.out.print("Do you want to (1) Use sample data or (2) Input your own data? Enter 1 or 2: ");
+            try {
+                choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                if (choice != 1 && choice != 2) {
+                    System.out.println("❌ Invalid choice! Please enter 1 or 2.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("❌ Invalid input! Please enter a number (1 or 2).");
+                scanner.nextLine(); // Clear invalid input
+            }
+        }
         
         Student[] students = new Student[6]; // Array to hold up to 6 students (5 + 1 for overflow test)
         
         if (choice == 2) {
-            // User input mode
+            // User input mode with validation
             System.out.println("\nNote: The roster has a maximum capacity of 5 students.");
-            System.out.print("How many students do you want to add? (We'll test overflow if > 5): ");
-            int numStudents = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            int numStudents = 0;
+            while (numStudents <= 0) {
+                System.out.print("How many students do you want to add? (1-6, we'll test overflow if > 5): ");
+                try {
+                    numStudents = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline
+                    if (numStudents <= 0) {
+                        System.out.println("❌ Please enter a positive number!");
+                    } else if (numStudents > 6) {
+                        System.out.println("❌ Maximum 6 students for demonstration. Please enter 1-6.");
+                        numStudents = 0;
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("❌ Invalid input! Please enter a valid number.");
+                    scanner.nextLine(); // Clear invalid input
+                }
+            }
             
             numStudents = Math.min(numStudents, 6); // Cap at 6 for demonstration
             
             for (int i = 0; i < numStudents; i++) {
                 System.out.println("\n--- Enter Student " + (i + 1) + " Details ---");
                 
-                System.out.print("Student Name: ");
-                String name = scanner.nextLine();
+                // Validate student name
+                String name = "";
+                while (name.trim().isEmpty()) {
+                    System.out.print("Student Name: ");
+                    name = scanner.nextLine();
+                    if (name.trim().isEmpty()) {
+                        System.out.println("❌ Student name cannot be empty!");
+                    } else if (!name.matches("[a-zA-Z\\s]+")) {
+                        System.out.println("❌ Student name should only contain letters and spaces!");
+                        name = "";
+                    }
+                }
                 
-                System.out.print("ID Number: ");
-                String idNumber = scanner.nextLine();
+                // Validate ID number
+                String idNumber = "";
+                boolean idExists = false;
+                while (idNumber.trim().isEmpty() || idExists) {
+                    System.out.print("ID Number (e.g., 2024001): ");
+                    idNumber = scanner.nextLine();
+                    idExists = false;
+                    
+                    if (idNumber.trim().isEmpty()) {
+                        System.out.println("❌ ID number cannot be empty!");
+                    } else if (!idNumber.matches("[0-9]{7}")) {
+                        System.out.println("❌ ID number should be exactly 7 digits!");
+                        idNumber = "";
+                    } else {
+                        // Check for duplicate ID
+                        for (int j = 0; j < i; j++) {
+                            if (students[j] != null && students[j].getIdNumber().equals(idNumber)) {
+                                System.out.println("❌ This ID number already exists! Please enter a unique ID.");
+                                idExists = true;
+                                break;
+                            }
+                        }
+                    }
+                }
                 
-                System.out.print("Status (ENROLLED/NOT_ENROLLED): ");
-                String status = scanner.nextLine();
+                // Validate status
+                String status = "";
+                while (!status.equalsIgnoreCase("ENROLLED") && !status.equalsIgnoreCase("NOT_ENROLLED")) {
+                    System.out.print("Status (ENROLLED/NOT_ENROLLED): ");
+                    status = scanner.nextLine().toUpperCase();
+                    if (!status.equals("ENROLLED") && !status.equals("NOT_ENROLLED")) {
+                        System.out.println("❌ Please enter either ENROLLED or NOT_ENROLLED!");
+                    }
+                }
                 
-                System.out.print("Department (e.g., Computer Science, Engineering): ");
-                String department = scanner.nextLine();
+                // Validate department
+                String department = "";
+                while (department.trim().isEmpty()) {
+                    System.out.print("Department (e.g., Computer Science, Engineering): ");
+                    department = scanner.nextLine();
+                    if (department.trim().isEmpty()) {
+                        System.out.println("❌ Department cannot be empty!");
+                    } else if (!department.matches("[a-zA-Z\\s]+")) {
+                        System.out.println("❌ Department should only contain letters and spaces!");
+                        department = "";
+                    }
+                }
                 
-                System.out.print("Course (e.g., Data Structures): ");
-                String course = scanner.nextLine();
+                // Validate course
+                String course = "";
+                while (course.trim().isEmpty()) {
+                    System.out.print("Course (e.g., Data Structures): ");
+                    course = scanner.nextLine();
+                    if (course.trim().isEmpty()) {
+                        System.out.println("❌ Course cannot be empty!");
+                    }
+                }
                 
-                System.out.print("Year Level (e.g., 1st Year, 2nd Year): ");
-                String yearLevel = scanner.nextLine();
+                // Validate year level
+                String yearLevel = "";
+                while (!yearLevel.matches("(1st|2nd|3rd|4th|5th)\\s+Year")) {
+                    System.out.print("Year Level (1st Year, 2nd Year, 3rd Year, 4th Year, or 5th Year): ");
+                    yearLevel = scanner.nextLine();
+                    if (!yearLevel.matches("(1st|2nd|3rd|4th|5th)\\s+Year")) {
+                        System.out.println("❌ Please enter a valid year level (e.g., 1st Year, 2nd Year)!");
+                    }
+                }
                 
-                System.out.print("GPA (0.0 - 4.0): ");
-                double gpa = scanner.nextDouble();
-                scanner.nextLine(); // Consume newline
+                // Validate GPA
+                double gpa = -1;
+                while (gpa < 0.0 || gpa > 4.0) {
+                    System.out.print("GPA (0.0 - 4.0): ");
+                    try {
+                        gpa = scanner.nextDouble();
+                        scanner.nextLine(); // Consume newline
+                        if (gpa < 0.0 || gpa > 4.0) {
+                            System.out.println("❌ GPA must be between 0.0 and 4.0!");
+                        }
+                    } catch (InputMismatchException e) {
+                        System.out.println("❌ Invalid input! Please enter a number between 0.0 and 4.0.");
+                        scanner.nextLine(); // Clear invalid input
+                        gpa = -1;
+                    }
+                }
                 
                 students[i] = new Student(name, idNumber, status, department, course, yearLevel, gpa);
             }
@@ -110,12 +213,27 @@ public class ClassRosterManagerApp {
         System.out.println("SEARCHING FOR STUDENTS:");
         System.out.println("===========================");
         
-        System.out.print("\nDo you want to search for a student? (y/n): ");
-        String searchChoice = scanner.nextLine();
+        String searchChoice = "";
+        while (!searchChoice.equalsIgnoreCase("y") && !searchChoice.equalsIgnoreCase("n")) {
+            System.out.print("\nDo you want to search for a student? (y/n): ");
+            searchChoice = scanner.nextLine().trim();
+            if (!searchChoice.equalsIgnoreCase("y") && !searchChoice.equalsIgnoreCase("n")) {
+                System.out.println("❌ Please enter 'y' for yes or 'n' for no.");
+            }
+        }
         
         if (searchChoice.equalsIgnoreCase("y")) {
-            System.out.print("Enter student ID to search: ");
-            String searchId = scanner.nextLine();
+            String searchId = "";
+            while (searchId.trim().isEmpty()) {
+                System.out.print("Enter student ID to search (7 digits): ");
+                searchId = scanner.nextLine();
+                if (searchId.trim().isEmpty()) {
+                    System.out.println("❌ ID cannot be empty!");
+                } else if (!searchId.matches("[0-9]{7}")) {
+                    System.out.println("❌ ID should be exactly 7 digits!");
+                    searchId = "";
+                }
+            }
             
             try {
                 Student searchStudent = new Student();
@@ -141,12 +259,27 @@ public class ClassRosterManagerApp {
         System.out.println("\nDROPPING A STUDENT:");
         System.out.println("========================");
         
-        System.out.print("Do you want to drop a student? (y/n): ");
-        String dropChoice = scanner.nextLine();
+        String dropChoice = "";
+        while (!dropChoice.equalsIgnoreCase("y") && !dropChoice.equalsIgnoreCase("n")) {
+            System.out.print("Do you want to drop a student? (y/n): ");
+            dropChoice = scanner.nextLine().trim();
+            if (!dropChoice.equalsIgnoreCase("y") && !dropChoice.equalsIgnoreCase("n")) {
+                System.out.println("❌ Please enter 'y' for yes or 'n' for no.");
+            }
+        }
         
         if (dropChoice.equalsIgnoreCase("y") && classRoster.getSize() > 0) {
-            System.out.print("Enter student ID to drop: ");
-            String dropId = scanner.nextLine();
+            String dropId = "";
+            while (dropId.trim().isEmpty()) {
+                System.out.print("Enter student ID to drop (7 digits): ");
+                dropId = scanner.nextLine();
+                if (dropId.trim().isEmpty()) {
+                    System.out.println("❌ ID cannot be empty!");
+                } else if (!dropId.matches("[0-9]{7}")) {
+                    System.out.println("❌ ID should be exactly 7 digits!");
+                    dropId = "";
+                }
+            }
             
             Student dropStudent = new Student();
             dropStudent.setIdNumber(dropId);
@@ -172,30 +305,106 @@ public class ClassRosterManagerApp {
             System.out.println("ENROLLING FROM WAITLIST:");
             System.out.println("============================");
             
-            System.out.print("Do you want to add a student from waitlist? (y/n): ");
-            String waitlistChoice = scanner.nextLine();
+            String waitlistChoice = "";
+            while (!waitlistChoice.equalsIgnoreCase("y") && !waitlistChoice.equalsIgnoreCase("n")) {
+                System.out.print("Do you want to add a student from waitlist? (y/n): ");
+                waitlistChoice = scanner.nextLine().trim();
+                if (!waitlistChoice.equalsIgnoreCase("y") && !waitlistChoice.equalsIgnoreCase("n")) {
+                    System.out.println("❌ Please enter 'y' for yes or 'n' for no.");
+                }
+            }
             
             if (waitlistChoice.equalsIgnoreCase("y")) {
                 System.out.println("\n--- Enter Waitlisted Student Details ---");
                 
-                System.out.print("Student Name: ");
-                String name = scanner.nextLine();
+                // Validate student name
+                String name = "";
+                while (name.trim().isEmpty()) {
+                    System.out.print("Student Name: ");
+                    name = scanner.nextLine();
+                    if (name.trim().isEmpty()) {
+                        System.out.println("❌ Student name cannot be empty!");
+                    } else if (!name.matches("[a-zA-Z\\s]+")) {
+                        System.out.println("❌ Student name should only contain letters and spaces!");
+                        name = "";
+                    }
+                }
                 
-                System.out.print("ID Number: ");
-                String idNumber = scanner.nextLine();
+                // Validate ID number
+                String idNumber = "";
+                boolean idExists = false;
+                while (idNumber.trim().isEmpty() || idExists) {
+                    System.out.print("ID Number (7 digits): ");
+                    idNumber = scanner.nextLine();
+                    idExists = false;
+                    
+                    if (idNumber.trim().isEmpty()) {
+                        System.out.println("❌ ID number cannot be empty!");
+                    } else if (!idNumber.matches("[0-9]{7}")) {
+                        System.out.println("❌ ID number should be exactly 7 digits!");
+                        idNumber = "";
+                    } else {
+                        // Check for duplicate ID in current roster
+                        for (int j = 0; j < classRoster.getSize(); j++) {
+                            Student existingStudent = classRoster.get(j);
+                            if (existingStudent != null && existingStudent.getIdNumber().equals(idNumber)) {
+                                System.out.println("❌ This ID number already exists in the roster!");
+                                idExists = true;
+                                break;
+                            }
+                        }
+                    }
+                }
                 
-                System.out.print("Department: ");
-                String department = scanner.nextLine();
+                // Validate department
+                String department = "";
+                while (department.trim().isEmpty()) {
+                    System.out.print("Department: ");
+                    department = scanner.nextLine();
+                    if (department.trim().isEmpty()) {
+                        System.out.println("❌ Department cannot be empty!");
+                    } else if (!department.matches("[a-zA-Z\\s]+")) {
+                        System.out.println("❌ Department should only contain letters and spaces!");
+                        department = "";
+                    }
+                }
                 
-                System.out.print("Course: ");
-                String course = scanner.nextLine();
+                // Validate course
+                String course = "";
+                while (course.trim().isEmpty()) {
+                    System.out.print("Course: ");
+                    course = scanner.nextLine();
+                    if (course.trim().isEmpty()) {
+                        System.out.println("❌ Course cannot be empty!");
+                    }
+                }
                 
-                System.out.print("Year Level: ");
-                String yearLevel = scanner.nextLine();
+                // Validate year level
+                String yearLevel = "";
+                while (!yearLevel.matches("(1st|2nd|3rd|4th|5th)\\s+Year")) {
+                    System.out.print("Year Level (1st Year, 2nd Year, etc.): ");
+                    yearLevel = scanner.nextLine();
+                    if (!yearLevel.matches("(1st|2nd|3rd|4th|5th)\\s+Year")) {
+                        System.out.println("❌ Please enter a valid year level!");
+                    }
+                }
                 
-                System.out.print("GPA: ");
-                double gpa = scanner.nextDouble();
-                scanner.nextLine(); // Consume newline
+                // Validate GPA
+                double gpa = -1;
+                while (gpa < 0.0 || gpa > 4.0) {
+                    System.out.print("GPA (0.0 - 4.0): ");
+                    try {
+                        gpa = scanner.nextDouble();
+                        scanner.nextLine(); // Consume newline
+                        if (gpa < 0.0 || gpa > 4.0) {
+                            System.out.println("❌ GPA must be between 0.0 and 4.0!");
+                        }
+                    } catch (InputMismatchException e) {
+                        System.out.println("❌ Invalid input! Please enter a number between 0.0 and 4.0.");
+                        scanner.nextLine(); // Clear invalid input
+                        gpa = -1;
+                    }
+                }
                 
                 Student waitlistStudent = new Student(name, idNumber, "ENROLLED", 
                                                      department, course, yearLevel, gpa);
