@@ -1,11 +1,13 @@
 package prelim;
 
 import java.util.Scanner;
+import java.util.InputMismatchException;
 
 /**
  * Academic Records System Application
  * Demonstrates MyGrowingArrayList with StudentGrade objects
  * Perfect for expanding collections - Grows as more grades are added
+ * Now with comprehensive input validation
  */
 public class AcademicRecordsSystemApp {
     
@@ -17,39 +19,120 @@ public class AcademicRecordsSystemApp {
         // Create a growing list for academic records
         MyGrowingArrayList<StudentGrade> academicRecords = new MyGrowingArrayList<>();
         
-        // Ask user whether to use sample data or input their own
-        System.out.print("Do you want to (1) Use sample data or (2) Input your own data? Enter 1 or 2: ");
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        // Ask user whether to use sample data or input their own with validation
+        int choice = 0;
+        while (choice != 1 && choice != 2) {
+            System.out.print("Do you want to (1) Use sample data or (2) Input your own data? Enter 1 or 2: ");
+            try {
+                choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                if (choice != 1 && choice != 2) {
+                    System.out.println("❌ Invalid choice! Please enter 1 or 2.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("❌ Invalid input! Please enter a number (1 or 2).");
+                scanner.nextLine(); // Clear invalid input
+            }
+        }
         
         StudentGrade[] grades;
         
         if (choice == 2) {
-            // User input mode
-            System.out.print("How many grade records do you want to enter? ");
-            int numRecords = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            // User input mode with validation
+            int numRecords = 0;
+            while (numRecords <= 0) {
+                System.out.print("How many grade records do you want to enter? (1-50): ");
+                try {
+                    numRecords = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline
+                    if (numRecords <= 0) {
+                        System.out.println("❌ Please enter a positive number!");
+                    } else if (numRecords > 50) {
+                        System.out.println("❌ That's too many records! Please enter a number between 1 and 50.");
+                        numRecords = 0;
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("❌ Invalid input! Please enter a valid number.");
+                    scanner.nextLine(); // Clear invalid input
+                }
+            }
             
             grades = new StudentGrade[numRecords];
             
             for (int i = 0; i < numRecords; i++) {
                 System.out.println("\n--- Enter Grade Record " + (i + 1) + " ---");
                 
-                System.out.print("Student Name: ");
-                String studentName = scanner.nextLine();
+                // Validate student name
+                String studentName = "";
+                while (studentName.trim().isEmpty()) {
+                    System.out.print("Student Name: ");
+                    studentName = scanner.nextLine();
+                    if (studentName.trim().isEmpty()) {
+                        System.out.println("❌ Student name cannot be empty!");
+                    } else if (!studentName.matches("[a-zA-Z\\s]+")) {
+                        System.out.println("❌ Student name should only contain letters and spaces!");
+                        studentName = "";
+                    }
+                }
                 
-                System.out.print("Subject Code (e.g., ICS211, MATH101): ");
-                String subjectCode = scanner.nextLine();
+                // Validate subject code
+                String subjectCode = "";
+                while (subjectCode.trim().isEmpty()) {
+                    System.out.print("Subject Code (e.g., ICS211, MATH101): ");
+                    subjectCode = scanner.nextLine().toUpperCase();
+                    if (subjectCode.trim().isEmpty()) {
+                        System.out.println("❌ Subject code cannot be empty!");
+                    } else if (!subjectCode.matches("[A-Z]{2,4}[0-9]{3}")) {
+                        System.out.println("❌ Invalid format! Subject code should be like ICS211 or MATH101");
+                        subjectCode = "";
+                    }
+                }
                 
-                System.out.print("Semester (e.g., 1st Semester 2024): ");
-                String semester = scanner.nextLine();
+                // Validate semester
+                String semester = "";
+                while (semester.trim().isEmpty()) {
+                    System.out.print("Semester (e.g., 1st Semester 2024): ");
+                    semester = scanner.nextLine();
+                    if (semester.trim().isEmpty()) {
+                        System.out.println("❌ Semester cannot be empty!");
+                    } else if (!semester.matches(".*[0-9]{4}.*")) {
+                        System.out.println("❌ Semester should include a year (e.g., 2024)!");
+                        semester = "";
+                    }
+                }
                 
-                System.out.print("Midterm Grade: ");
-                double midtermGrade = scanner.nextDouble();
+                // Validate midterm grade
+                double midtermGrade = -1;
+                while (midtermGrade < 0 || midtermGrade > 100) {
+                    System.out.print("Midterm Grade (0-100): ");
+                    try {
+                        midtermGrade = scanner.nextDouble();
+                        if (midtermGrade < 0 || midtermGrade > 100) {
+                            System.out.println("❌ Grade must be between 0 and 100!");
+                        }
+                    } catch (InputMismatchException e) {
+                        System.out.println("❌ Invalid input! Please enter a number between 0 and 100.");
+                        scanner.nextLine(); // Clear invalid input
+                        midtermGrade = -1;
+                    }
+                }
                 
-                System.out.print("Final Grade: ");
-                double finalGrade = scanner.nextDouble();
-                scanner.nextLine(); // Consume newline
+                // Validate final grade
+                double finalGrade = -1;
+                while (finalGrade < 0 || finalGrade > 100) {
+                    System.out.print("Final Grade (0-100): ");
+                    try {
+                        finalGrade = scanner.nextDouble();
+                        scanner.nextLine(); // Consume newline
+                        if (finalGrade < 0 || finalGrade > 100) {
+                            System.out.println("❌ Grade must be between 0 and 100!");
+                        }
+                    } catch (InputMismatchException e) {
+                        System.out.println("❌ Invalid input! Please enter a number between 0 and 100.");
+                        scanner.nextLine(); // Clear invalid input
+                        finalGrade = -1;
+                    }
+                }
                 
                 // Calculate letter grade and status based on average
                 double average = (midtermGrade + finalGrade) / 2;
@@ -131,17 +214,44 @@ public class AcademicRecordsSystemApp {
             System.out.println("SEARCHING FOR SPECIFIC RECORDS:");
             System.out.println("===================================");
             
-            // Ask user if they want to search for a specific record
-            System.out.print("\nDo you want to search for a specific record? (y/n): ");
-            String searchChoice = scanner.nextLine();
+            // Ask user if they want to search for a specific record with validation
+            String searchChoice = "";
+            while (!searchChoice.equalsIgnoreCase("y") && !searchChoice.equalsIgnoreCase("n")) {
+                System.out.print("\nDo you want to search for a specific record? (y/n): ");
+                searchChoice = scanner.nextLine().trim();
+                if (!searchChoice.equalsIgnoreCase("y") && !searchChoice.equalsIgnoreCase("n")) {
+                    System.out.println("❌ Please enter 'y' for yes or 'n' for no.");
+                }
+            }
             
             if (searchChoice.equalsIgnoreCase("y")) {
-                System.out.print("Enter student name to search: ");
-                String searchName = scanner.nextLine();
-                System.out.print("Enter subject code to search: ");
-                String searchSubject = scanner.nextLine();
-                System.out.print("Enter semester to search: ");
-                String searchSemester = scanner.nextLine();
+                // Validate search inputs
+                String searchName = "";
+                while (searchName.trim().isEmpty()) {
+                    System.out.print("Enter student name to search: ");
+                    searchName = scanner.nextLine();
+                    if (searchName.trim().isEmpty()) {
+                        System.out.println("❌ Student name cannot be empty!");
+                    }
+                }
+                
+                String searchSubject = "";
+                while (searchSubject.trim().isEmpty()) {
+                    System.out.print("Enter subject code to search: ");
+                    searchSubject = scanner.nextLine().toUpperCase();
+                    if (searchSubject.trim().isEmpty()) {
+                        System.out.println("❌ Subject code cannot be empty!");
+                    }
+                }
+                
+                String searchSemester = "";
+                while (searchSemester.trim().isEmpty()) {
+                    System.out.print("Enter semester to search: ");
+                    searchSemester = scanner.nextLine();
+                    if (searchSemester.trim().isEmpty()) {
+                        System.out.println("❌ Semester cannot be empty!");
+                    }
+                }
                 
                 StudentGrade searchGrade = new StudentGrade();
                 searchGrade.setStudentName(searchName);
@@ -176,18 +286,44 @@ public class AcademicRecordsSystemApp {
             System.out.println("\nANALYZING ACADEMIC PERFORMANCE:");
             System.out.println("===================================");
             
-            // Ask user which students to analyze
-            System.out.print("\nDo you want to analyze specific students? (y/n): ");
-            String analyzeChoice = scanner.nextLine();
+            // Ask user which students to analyze with validation
+            String analyzeChoice = "";
+            while (!analyzeChoice.equalsIgnoreCase("y") && !analyzeChoice.equalsIgnoreCase("n")) {
+                System.out.print("\nDo you want to analyze specific students? (y/n): ");
+                analyzeChoice = scanner.nextLine().trim();
+                if (!analyzeChoice.equalsIgnoreCase("y") && !analyzeChoice.equalsIgnoreCase("n")) {
+                    System.out.println("❌ Please enter 'y' for yes or 'n' for no.");
+                }
+            }
             
             if (analyzeChoice.equalsIgnoreCase("y")) {
-                System.out.print("How many students do you want to analyze? ");
-                int numStudents = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
+                int numStudents = 0;
+                while (numStudents <= 0) {
+                    System.out.print("How many students do you want to analyze? (1-20): ");
+                    try {
+                        numStudents = scanner.nextInt();
+                        scanner.nextLine(); // Consume newline
+                        if (numStudents <= 0) {
+                            System.out.println("❌ Please enter a positive number!");
+                        } else if (numStudents > 20) {
+                            System.out.println("❌ That's too many! Please enter a number between 1 and 20.");
+                            numStudents = 0;
+                        }
+                    } catch (InputMismatchException e) {
+                        System.out.println("❌ Invalid input! Please enter a valid number.");
+                        scanner.nextLine(); // Clear invalid input
+                    }
+                }
                 
                 for (int i = 0; i < numStudents; i++) {
-                    System.out.print("Enter student name " + (i + 1) + ": ");
-                    String studentName = scanner.nextLine();
+                    String studentName = "";
+                    while (studentName.trim().isEmpty()) {
+                        System.out.print("Enter student name " + (i + 1) + ": ");
+                        studentName = scanner.nextLine();
+                        if (studentName.trim().isEmpty()) {
+                            System.out.println("❌ Student name cannot be empty!");
+                        }
+                    }
                     analyzeStudentPerformance(academicRecords, studentName);
                 }
             } else {
